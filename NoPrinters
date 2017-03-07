@@ -1,0 +1,70 @@
+# coding=utf-8
+
+# SCRIPT THAT CHECK known_printers.json FILE sintaxis for NO Printer added
+# Developed for Python 2.7
+
+# Imports
+import os
+import ast
+
+# Variables
+winuser =  os.getenv('username')
+path = 'C:\\Users\\'+winuser+'\\AppData\\Roaming\\Zetup\\known_printers.json'
+match = True
+info = list()
+
+# We read the whole file content into doc variable
+with open(path, 'r') as content_file:
+    doc = content_file.read()
+
+# Close file
+content_file.close()
+
+# Cast doc from String to Dictionary
+doc = ast.literal_eval(doc)
+
+
+if 'defaultPrinterId' in doc:
+    if  doc.get('defaultPrinterId') != "":
+        match = False
+        info.append("defaultPrinterId debería estar vacío y tiene el siguiente valor: "+str(doc.get('defaultPrinterId')))
+else:
+    print 'El campo defaultPrinterId debería existir'
+if 'printersData' in doc:
+    if doc.get('printersData') != []:
+        match = False
+        info.append("printersData debería estar vacío y tiene el siguiente valor: "+str(doc.get('printersData')))
+else:
+    print 'El campo printersData debería existir'
+if 'version' in doc:
+    if int(doc.get('version')) != 1:
+        match = False
+        info.append("version debería estar vacío y tiene el siguiente valor: "+str(doc.get('version')))
+else:
+    print 'El campo version debería existir'
+
+# Show message if matches or not
+if match: print 'El fichero tiene la configuración requerida'
+else:
+    print '\nEl fichero NO cumple con la configuración requerida o tiene impresoras agregadas\n'
+
+    # If there is any error, show extra info
+    for i in info:
+        print i
+
+
+# Default configuration for no printers added
+#default = """{
+#    "defaultPrinterId": "",
+#    "printersData": [
+#    ],
+#    "version": "1"
+#}
+#"""
+
+# Compare both configurations and make sure if it matches
+#for i in range(len(doc)):
+#    if doc[i] == default[i]: continue
+#    else:
+#        match = False
+#        break
